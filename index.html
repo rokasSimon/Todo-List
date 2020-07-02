@@ -2,9 +2,46 @@
 <html lang="en">
     <head>
         <title>Todo List</title>
+        <script src="https://kit.fontawesome.com/fc1819c339.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
         <link href="./index.css" rel="stylesheet">
     </head>
     <body>
+        <div id="content">
+            <div id="logo">
+                <span>Task Manager <i class="fas fa-tasks"></i></span>
+            </div>
+            <div id="header"></div>
+            <div id="project-list">
+                <span>Your projects</span>
+                <div id="project-container"></div>
+                <button id="project-add-button" class="project-list-item"><i class="fas fa-plus"></i></button>
+            </div>
+            <div id="task-list">
+                <div id="tasks">
+                    <span>Your tasks</span>
+                    <div id="task-container"></div>
+                    <button id="task-add-button"><i class="fas fa-plus"></i></button>
+                </div>
+                <div id="task-info">
+                    <span>Details for:</span>
+                    <div id="information-container">
+                        <input id="details-header" class="details" placeholder="You haven't set a name" type="text" readonly>
+                        <input id="details-date" class="details" value="2020-07-02" placeholder="You haven't set a date" type="date" readonly>
+                        <textarea id="details-description" class="details" placeholder="You haven't set a description" readonly></textarea>
+                        <select id="details-select" class="details details-select" disabled>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <div id="details-buttons">
+                            <button id="details-update"><i class="fas fa-edit"></i></button>
+                            <button id="details-delete"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="./main.js"></script>
     </body>
 </html>
