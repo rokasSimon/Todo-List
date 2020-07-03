@@ -48,10 +48,33 @@ class ProjectManager {
         if (projectIndex != -1 ) {
             this.projects.splice(projectIndex, 1);
         }
+        for (let i = 0; i < this.projects.length; i++) {
+            this.projects[i].index = i;
+        }
     }
 
-    getProjectsFromStorage() {
+    /** @param {Object} projectManager */
+    setupProjectManagerFromStorage(projectManager) {
+        for (let project of projectManager.projects) {
+            let newProject = new Project(project.name, project.index);
+            newProject.setupFromJSON(project);
+            this.projects.push(newProject);
+        }
 
+        /** @type {Detail} */
+        let detail = projectManager.currentDetail;
+
+        if (detail.isTask) {
+            this.currentDetail.setTask(detail.name, detail.description, detail.dueDate, detail.priority);
+        }
+        else {
+            this.currentDetail.setProject(detail.name);
+        }
+
+        let newCurrentProject = new Project(projectManager.currentProject.name, projectManager.currentProject.index);
+        newCurrentProject.setupFromJSON(projectManager.currentProject);
+
+        this.currentProject = newCurrentProject;
     }
 }
 

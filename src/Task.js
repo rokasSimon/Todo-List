@@ -18,6 +18,15 @@ class Task {
         this.isActive = true;
         this.index = Main.currentProject.currentTask.index;
     }
+
+    setupFromJSON(obj) {
+        this.name = obj.name;
+        this.description = obj.description;
+        this.dueDate = obj.dueDate;
+        this.priority = obj.priority;
+        this.isActive == obj.isActive;
+        this.index = obj.index;
+    }
 }
 
 export default Task;

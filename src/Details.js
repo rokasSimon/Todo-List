@@ -1,13 +1,13 @@
 class Details {
     constructor() {
         /** @type {string} name */
-        this.name = "Unset";
+        this.name = "No projects";
         /** @type {string} description */
-        this.description = undefined;
+        this.description = null;
         /** @type {string} dueDate */
-        this.dueDate = undefined;
+        this.dueDate = null;
         /** @type {string}  */
-        this.priority = undefined;
+        this.priority = null;
 
         this.isProject = false;
         this.isTask = false;
@@ -16,10 +16,10 @@ class Details {
 
     setProject(name = "") {
         this.name = name;
-        this.description = undefined;
-        this.dueDate = undefined;
-        this.priority = undefined;
-        this.isProject = true;
+        this.description = null;
+        this.dueDate = null;
+        this.priority = null;
+        this.isProject = null;
         this.isTask = false;
     }
     

@@ -36,6 +36,29 @@ class Project {
         if (taskIndex != -1 ) {
             this.tasks.splice(taskIndex, 1);
         }
+        for (let i = 0; i < this.tasks.length; i++) {
+            this.tasks[i].index = i;
+        }
+    }
+
+    /** @param {Object} obj */
+    setupFromJSON(obj) {
+        this.name = obj.name;
+
+        for (const task of obj.tasks) {
+            let newTask = new Task(task.index);
+            newTask.setupFromJSON(task);
+            this.tasks.push(newTask);
+        }
+
+        if (obj.currentTask != null) {
+            let currentTask = new Task(obj.currentTask.index);
+            currentTask.setupFromJSON(obj.currentTask);
+            this.currentTask = currentTask;
+        }
+
+        this.isActive = obj.isActive;
+        this.index = obj.index;
     }
 }
 

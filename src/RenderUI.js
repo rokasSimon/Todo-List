@@ -1,13 +1,13 @@
-import { default as Project } from "./Project";
-import { default as Task } from "./Task";
-import { default as Details } from "./Details";
 import * as Events from './EventManager'
 import { Main } from './ProjectManager'
+import { saveToStorage } from './Storage'
 
 function renderFull() {
     renderProjects();
     renderTasks();
     renderDetails();
+
+    saveToStorage();
 }
 
 function renderProjects() {
@@ -38,17 +38,19 @@ function renderTasks() {
     let newTasks = document.createElement("div");
     newTasks.id = "task-container";
 
-    for (const task of Main.currentProject.tasks) {
-        let button = document.createElement("button");
-        let index = document.createAttribute("data-index");
-        index.value = task.index;
-        button.classList.add("task");
-        if (task.isActive) button.classList.add("active-item");
-        button.textContent = task.name;
-        button.setAttributeNode(index);
-        Events.taskButtonHandler(button);
-
-        newTasks.append(button);
+    if (Main.currentProject != null) {
+        for (const task of Main.currentProject.tasks) {
+            let button = document.createElement("button");
+            let index = document.createAttribute("data-index");
+            index.value = task.index;
+            button.classList.add("task");
+            if (task.isActive) button.classList.add("active-item");
+            button.textContent = task.name;
+            button.setAttributeNode(index);
+            Events.taskButtonHandler(button);
+    
+            newTasks.append(button);
+        }
     }
 
     taskContainer.replaceWith(newTasks);
@@ -61,98 +63,17 @@ function renderDetails() {
     newDetails.id = "information-container";
 
     if (Main.currentDetail.isTask) {
-        let header = document.createElement("input");
-        let date = document.createElement("input");
-        let description = document.createElement("textarea");
-        let priority = document.createElement("select");
-        let low = document.createElement("option");
-        let medium = document.createElement("option");
-        let high = document.createElement("option");
-        let buttons = document.createElement("div");
-        let update = document.createElement("button");
-        let deleteButton = document.createElement("button");
-
-        let editImg = document.createElement("i");
-        editImg.classList.add("fas", "fa-edit");
-        let delImg = document.createElement("i");
-        delImg.classList.add("fas", "fa-trash-alt");
-
-        header.id = "details-header";
-        header.classList.add("details");
-        header.placeholder = "You haven't set a name";
-        header.type = "text";
-        header.value = Main.currentDetail.name;
-        header.readOnly = true;
-
-        date.id = "details-date";
-        date.classList.add("details");
-        date.type = "date";
-        date.value = Main.currentDetail.dueDate;
-        date.placeholder = "You haven't set a date";
-        date.readOnly = true;
-
-        description.id = "details-description";
-        description.classList.add("details");
-        description.placeholder = "You haven't set a description";
-        description.value = Main.currentDetail.description;
-        description.readOnly = true;
-
-        priority.id = "details-select";
-        priority.classList.add("details", "details-select");
-        priority.disabled = true;
-
-        low.value = "Low";
-        low.textContent = "Low";
-        medium.value = "Medium";
-        medium.textContent = "Medium";
-        high.value = "High";
-        high.textContent = "High";
-
-        priority.add(low);
-        priority.add(medium);
-        priority.add(high);
-
-        priority.value = Main.currentDetail.priority;
-
-        buttons.id = "details-buttons";
-
-        update.id = "details-update";
-        update.append(editImg);
-        Events.enableEdits(update);
-        deleteButton.id = "details-delete";
-        deleteButton.append(delImg);
-
-        buttons.append(update, deleteButton);
+        let header = generateHeader();
+        let date = generateDate();
+        let description = generateDescription();
+        let priority = generatePriority();
+        let buttons = generateButtonDiv();
 
         newDetails.append(header, date, description, priority, buttons);
     }
     else {
-        let header = document.createElement("input");
-        let buttons = document.createElement("div");
-        let update = document.createElement("button");
-        let deleteButton = document.createElement("button");
-
-        let editImg = document.createElement("i");
-        editImg.classList.add("fas", "fa-edit");
-        let delImg = document.createElement("i");
-        delImg.classList.add("fas", "fa-trash-alt");
-
-        header.id = "details-header";
-        header.classList.add("details");
-        header.placeholder = "You haven't set a name";
-        header.type = "text";
-        header.value = Main.currentDetail.name;
-        header.readOnly = true;
-
-        buttons.id = "details-buttons";
-
-        update.id = "details-update";
-        update.append(editImg);
-        Events.enableEdits(update);
-        deleteButton.id = "details-delete";
-        deleteButton.append(delImg);
-
-        buttons.append(update, deleteButton);
+        let header = generateHeader();
+        let buttons = generateButtonDiv();
 
         newDetails.append(header, buttons);
     }
@@ -190,7 +111,7 @@ function readInput() {
     let description = document.getElementById("details-description");
     let priority = document.getElementById("details-select");
 
-    let output = { header: header.value, date: undefined, description: undefined, priority: undefined };
+    let output = { header: header.value, date: null, description: null, priority: null };
 
     if (Main.currentDetail.isTask && date != null) {
         output.date = date.value;
@@ -199,6 +120,94 @@ function readInput() {
     }
 
     return output;
+}
+
+function generateHeader() {
+    let header = document.createElement("input");
+
+    header.id = "details-header";
+    header.classList.add("details");
+    header.placeholder = "You haven't set a name";
+    header.type = "text";
+    header.value = Main.currentDetail.name;
+    header.readOnly = true;
+
+    return header;
+}
+
+function generateDate() {
+    let date = document.createElement("input");
+
+    date.id = "details-date";
+    date.classList.add("details");
+    date.type = "date";
+    date.value = Main.currentDetail.dueDate;
+    date.placeholder = "You haven't set a date";
+    date.readOnly = true;
+
+    return date;
+}
+
+function generateDescription() {
+    let description = document.createElement("textarea");
+
+    description.id = "details-description";
+    description.classList.add("details");
+    description.placeholder = "You haven't set a description";
+    description.value = Main.currentDetail.description;
+    description.readOnly = true;
+
+    return description;
+}
+
+function generatePriority() {
+    let priority = document.createElement("select");
+    let low = document.createElement("option");
+    let medium = document.createElement("option");
+    let high = document.createElement("option");
+
+    priority.id = "details-select";
+    priority.classList.add("details", "details-select");
+    priority.disabled = true;
+
+    low.value = "Low";
+    low.textContent = "Low";
+    medium.value = "Medium";
+    medium.textContent = "Medium";
+    high.value = "High";
+    high.textContent = "High";
+
+    priority.add(low);
+    priority.add(medium);
+    priority.add(high);
+
+    priority.value = Main.currentDetail.priority;
+
+    return priority;
+}
+
+function generateButtonDiv() {
+    let buttons = document.createElement("div");
+    let update = document.createElement("button");
+    let deleteButton = document.createElement("button");
+
+    let editImg = document.createElement("i");
+    editImg.classList.add("fas", "fa-edit");
+    let delImg = document.createElement("i");
+    delImg.classList.add("fas", "fa-trash-alt");
+        
+    buttons.id = "details-buttons";
+
+    update.id = "details-update";
+    update.append(editImg);
+    Events.enableEditsHandler(update);
+    deleteButton.id = "details-delete";
+    deleteButton.append(delImg);
+    Events.deleteHandler(deleteButton);
+
+    buttons.append(update, deleteButton);
+
+    return buttons;
 }
 
 export { renderFull, renderProjects, renderTasks, renderDetails, switchEditButton, switchInput, readInput };
