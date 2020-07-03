@@ -71,10 +71,12 @@ class ProjectManager {
             this.currentDetail.setProject(detail.name);
         }
 
-        let newCurrentProject = new Project(projectManager.currentProject.name, projectManager.currentProject.index);
-        newCurrentProject.setupFromJSON(projectManager.currentProject);
-
-        this.currentProject = newCurrentProject;
+        if (projectManager.currentProject != null) {
+            let newCurrentProject = new Project(projectManager.currentProject.name, projectManager.currentProject.index);
+            newCurrentProject.setupFromJSON(projectManager.currentProject);
+    
+            this.currentProject = newCurrentProject;
+        }
     }
 }
 
